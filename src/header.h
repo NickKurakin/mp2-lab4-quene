@@ -206,18 +206,18 @@ public:
 };
 
 template <class T>
-class Stack
+class Quene
 {
 private:
 	List<T> list;
 public:
-	Stack() : list() {}
-	Stack(const List<T>& l) : list(l) {}
-	Stack(const Stack& s) : list(s.list) {}
+	Quene() : list() {}
+	Quene(const List<T>& l) : list(l) {}
+	Quene(const Quene& q) : list(q.list) {}
 
-	Stack& operator=(const Stack& s)
+	Quene& operator=(const Quene& q)
 	{
-		list = s.list;
+		list = q.list;
 		return *this;
 	}
 
@@ -228,7 +228,7 @@ public:
 
 	void push(T el)
 	{
-		list.pushFirst(el);
+		list.pushBack(el);
 	}
 
 	T get()
@@ -242,20 +242,4 @@ public:
 		if (list.getSize() == 0) throw 0;
 		list.delFirst();
 	}
-};
-
-class Calc
-{
-private:
-	string exp;
-	map<char, int> priority;
-public:
-	Calc();
-	Calc(string str);
-
-	void input(string str);
-	string getExp();
-
-	string toPost();
-	double calculate(const map<char,double>&);
 };
