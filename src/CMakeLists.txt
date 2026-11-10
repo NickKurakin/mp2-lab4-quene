@@ -1,6 +1,5 @@
 add_library(src
-    code.cpp
-    Calc.cpp
+    main.cpp
     header.h
 )
 

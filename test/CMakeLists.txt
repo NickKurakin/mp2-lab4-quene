@@ -13,8 +13,7 @@ set_target_properties(gtest gtest_main gmock gmock_main PROPERTIES FOLDER "Googl
 add_executable(tests
     testMain.cpp
     testList.cpp
-    testStack.cpp
-    testCalc.cpp
+    testQuene.cpp
 )
 
 
