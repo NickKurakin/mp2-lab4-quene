@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(PROJECT_NAME stack)
+set(PROJECT_NAME quene)
 project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 17)
