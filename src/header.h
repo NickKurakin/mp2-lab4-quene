@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <map>
 
 using namespace std;
@@ -8,24 +9,23 @@ struct ListElem
 {
 	T elem;
 	ListElem<T>* next = nullptr;
-	ListElem<T>* previous = nullptr;
 };
 
 template <class T>
-class List
+class TForwardList
 {
 private:
 	ListElem<T>* firstElem;
 	ListElem<T>* lastElem;
 	size_t sz;
 public:
-	List()
+	TForwardList()
 	{
 		firstElem = nullptr;
 		lastElem = nullptr;
 		sz = 0;
 	}
-	List(const List& l)
+	TForwardList(const TForwardList& l)
 	{
 		firstElem = nullptr;
 		lastElem = nullptr;
@@ -37,23 +37,41 @@ public:
 			tmp = tmp->next;
 		}
 	}
-	~List()
+	TForwardList(const std::vector<T>& v)
+	{
+		firstElem = nullptr;
+		lastElem = nullptr;
+		sz = 0;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			pushBack(v[i]);
+		}
+	}
+	~TForwardList()
+	{
+		clear();
+	}
+
+	void clear()
 	{
 		while (firstElem != nullptr) {
 			ListElem<T>* tmp = firstElem;
 			firstElem = tmp->next;
 			delete tmp;
 		}
+		lastElem = nullptr;
 	}
 
-	List& operator=(const List& l)
+	bool isEmpty()
+	{
+		return sz == 0;
+	}
+
+	TForwardList& operator=(const TForwardList& l)
 	{
 		if (this == &l) return *this;
 
-		while (firstElem != nullptr)
-		{
-			delBack();
-		}
+		clear();
 
 		ListElem<T>* tmp = l.firstElem;
 		for (size_t i = 0; i < l.sz; i++)
@@ -64,20 +82,15 @@ public:
 		return *this;
 	}
 
-	void pushFirst(T el)
+	void pushFront(T el)
 	{
 		ListElem<T>* newElem = new ListElem<T>;
 		newElem->elem = el;
-		if (sz == 0)
+		newElem->next = firstElem;
+		firstElem = newElem;
+		if (isEmpty())
 		{
-			firstElem = newElem;
 			lastElem = newElem;
-		}
-		else
-		{
-			firstElem->previous = newElem;
-			newElem->next = firstElem;
-			firstElem = newElem;
 		}
 		sz++;
 	}
@@ -86,7 +99,7 @@ public:
 	{
 		ListElem<T>* newElem = new ListElem<T>;
 		newElem->elem = el;
-		if (sz == 0)
+		if (isEmpty())
 		{
 			firstElem = newElem;
 			lastElem = newElem;
@@ -94,7 +107,6 @@ public:
 		else
 		{
 			lastElem->next = newElem;
-			newElem->previous = lastElem;
 			lastElem = newElem;
 		}
 		sz++;
@@ -102,7 +114,7 @@ public:
 	void push(T el, size_t pos)
 	{
 		if (pos > sz) throw pos;
-		else if (pos == 0) pushFirst(el);
+		else if (pos == 0) pushFront(el);
 		else if (pos == sz) pushBack(el);
 		else
 		{
@@ -110,12 +122,10 @@ public:
 			newElem->elem = el;
 
 			ListElem<T>* tmp = firstElem;
-			for (size_t i = 0; i < pos; i++) tmp = tmp->next;
+			for (size_t i = 0; i < pos-1; i++) tmp = tmp->next;
 
-			newElem->previous = tmp->previous;
-			newElem->next = tmp;
-			tmp->previous->next = newElem;
-			tmp->previous = newElem;
+			newElem->next = tmp->next;
+			tmp->next = newElem;
 
 			sz++;
 		}
@@ -126,7 +136,7 @@ public:
 		return sz;
 	}
 
-	T getFirst() const
+	T getFront() const
 	{
 		if (sz == 0) throw 0;
 		return firstElem->elem;
@@ -146,59 +156,50 @@ public:
 		return tmp->elem;
 	}
 
-	void delFirst()
+	void EraseFront()
 	{
-		if (sz == 0) throw 0;
-		if (sz == 1)
+		if (isEmpty()) throw 0;
+		ListElem<T>* tmp = firstElem;
+		firstElem = tmp->next;
+		delete tmp;
+		sz--;
+		if (isEmpty())
 		{
-			ListElem<T>* tmp = firstElem;
-			delete tmp;
-			firstElem = nullptr;
 			lastElem = nullptr;
+		}
+	}
+
+	void EraseBack()
+	{
+		if (isEmpty()) throw 0;
+		ListElem<T>* tmp = lastElem;
+		lastElem = nullptr;
+		delete tmp;
+		sz--;
+		if (isEmpty())
+		{
+			firstElem = nullptr;
 		}
 		else
 		{
 			ListElem<T>* tmp = firstElem;
-			firstElem = tmp->next;
-			firstElem->previous = nullptr;
-			delete tmp;
+			while (tmp->next != nullptr) tmp = tmp->next;
+			lastElem = tmp;
 		}
-		sz--;
 	}
-
-	void delBack()
-	{
-		if (sz == 0) throw 0;
-		if (sz == 1)
-		{
-			ListElem<T>* tmp = lastElem;
-			delete tmp;
-			firstElem = nullptr;
-			lastElem = nullptr;
-		}
-		else
-		{
-			ListElem<T>* tmp = lastElem;
-			lastElem = tmp->previous;
-			lastElem->next = nullptr;
-			delete tmp;
-		}
-
-		sz--;
-	}
-	void del(size_t pos)
+	void Erase(size_t pos)
 	{
 		if (pos >= sz) throw pos;
-		else if (pos == 0) delFirst();
-		else if (pos == sz-1) delBack();
+		else if (pos == 0) EraseFront();
+		else if (pos == sz-1) EraseBack();
 		else
 		{
 			ListElem<T>* tmp = firstElem;
-			for (size_t i = 0; i < pos; i++) tmp = tmp->next;
+			for (size_t i = 0; i < pos-1; i++) tmp = tmp->next;
 
-			tmp->previous->next = tmp->next;
-			tmp->next->previous = tmp->previous;
-			delete tmp;
+			ListElem<T>* tmp2 = tmp->next;
+			tmp->next = tmp->next->next;
+			delete tmp2;
 
 			sz--;
 		}
@@ -209,10 +210,10 @@ template <class T>
 class Quene
 {
 private:
-	List<T> list;
+	TForwardList<T> list;
 public:
 	Quene() : list() {}
-	Quene(const List<T>& l) : list(l) {}
+	Quene(const TForwardList<T>& l) : list(l) {}
 	Quene(const Quene& q) : list(q.list) {}
 
 	Quene& operator=(const Quene& q)
@@ -234,12 +235,12 @@ public:
 	T get()
 	{
 		if (list.getSize() == 0) throw 0;
-		return list.getFirst();
+		return list.getFront();
 	}
 	
 	void del()
 	{
 		if (list.getSize() == 0) throw 0;
-		list.delFirst();
+		list.EraseFront();
 	}
 };

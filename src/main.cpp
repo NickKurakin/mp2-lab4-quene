@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void printList(List<int> l)
+void printTForwardList(TForwardList<int> l)
 {
 	for (int i = 0; i < l.getSize(); i++)
 	{
@@ -16,27 +16,27 @@ void printList(List<int> l)
 
 int main()
 {
-	List<int> l;
+	TForwardList<int> l;
 	l.pushBack(1);
 	l.pushBack(2);
 	l.pushBack(3);
-	List<int> l2(l);
+	TForwardList<int> l2(l);
 	l.pushBack(4);
 	l.pushBack(5);
-	printList(l);
-	printList(l2);
+	printTForwardList(l);
+	printTForwardList(l2);
 
 	l.push(6, 4);
-	l2.pushFirst(6);
-	printList(l);
-	printList(l2);
+	l2.pushFront(6);
+	printTForwardList(l);
+	printTForwardList(l2);
 
 	l2 = l;
-	l.del(3);
-	l2.delFirst();
-	l2.delBack();
-	printList(l);
-	printList(l2);
+	l.Erase(3);
+	l2.EraseFront();
+	l2.EraseBack();
+	printTForwardList(l);
+	printTForwardList(l2);
 
 	system("pause");
 
