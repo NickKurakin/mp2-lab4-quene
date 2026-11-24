@@ -30,11 +30,9 @@ public:
 		firstElem = nullptr;
 		lastElem = nullptr;
 		sz = 0;
-		ListElem<T>* tmp = l.firstElem;
-		for (size_t i = 0; i < l.sz; i++)
+		for (ListElem<T>* tmp = l.firstElem; tmp != nullptr; tmp = tmp->next)
 		{
 			pushBack(tmp->elem);
-			tmp = tmp->next;
 		}
 	}
 	TForwardList(const std::vector<T>& v)
@@ -47,6 +45,7 @@ public:
 			pushBack(v[i]);
 		}
 	}
+
 	~TForwardList()
 	{
 		clear();
@@ -59,6 +58,7 @@ public:
 			firstElem = tmp->next;
 			delete tmp;
 		}
+		sz = 0;
 		lastElem = nullptr;
 	}
 
@@ -73,12 +73,11 @@ public:
 
 		clear();
 
-		ListElem<T>* tmp = l.firstElem;
-		for (size_t i = 0; i < l.sz; i++)
+		for (ListElem<T>* tmp = l.firstElem; tmp != nullptr; tmp = tmp->next)
 		{
 			pushBack(tmp->elem);
-			tmp = tmp->next;
 		}
+
 		return *this;
 	}
 
@@ -138,12 +137,12 @@ public:
 
 	T getFront() const
 	{
-		if (sz == 0) throw 0;
+		if (isEmpty()) throw 0;
 		return firstElem->elem;
 	}
 	T getBack() const
 	{
-		if (sz == 0) throw 0;
+		if (isEmpty()) throw 0;
 		return lastElem->elem;
 	}
 	T get(size_t pos) const
@@ -174,17 +173,19 @@ public:
 		if (isEmpty()) throw 0;
 		ListElem<T>* tmp = lastElem;
 		lastElem = nullptr;
-		delete tmp;
 		sz--;
 		if (isEmpty())
 		{
 			firstElem = nullptr;
+			delete tmp;
 		}
 		else
 		{
-			ListElem<T>* tmp = firstElem;
-			while (tmp->next != nullptr) tmp = tmp->next;
-			lastElem = tmp;
+			ListElem<T>* tmp2 = firstElem;
+			while (tmp2->next != tmp) tmp2 = tmp2->next;
+			lastElem = tmp2;
+			lastElem->next = nullptr;
+			delete tmp;
 		}
 	}
 	void Erase(size_t pos)
@@ -234,13 +235,13 @@ public:
 
 	T get()
 	{
-		if (list.getSize() == 0) throw 0;
+		if (list.isEmpty()) throw 0;
 		return list.getFront();
 	}
 	
 	void del()
 	{
-		if (list.getSize() == 0) throw 0;
+		if (list.isEmpty()) throw 0;
 		list.EraseFront();
 	}
 };

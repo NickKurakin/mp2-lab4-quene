@@ -13,6 +13,12 @@ TEST(TForwardList, can_copy_TForwardList)
 	ASSERT_NO_THROW(TForwardList<int> l2(l1));
 }
 
+TEST(TForwardList, can_create_TForwardList_from_vector)
+{
+	std::vector<int> v;
+	ASSERT_NO_THROW(TForwardList<int> l(v));
+}
+
 TEST(TForwardList, can_equate_TForwardLists)
 {
 	TForwardList<int> l1;
